@@ -170,3 +170,61 @@ func TestGraph_AddEdge_NewGraph(t *testing.T) {
 	}
 	assert.Equal(t, expected, graph.Nodes)
 }
+
+func newTestGraph() *Graph {
+	graph := NewGraph()
+	graph.AddEdge("A", "B", 5)
+	graph.AddEdge("B", "C", 5)
+	graph.AddEdge("C", "D", 7)
+	graph.AddEdge("A", "D", 15)
+	graph.AddEdge("E", "F", 5)
+	graph.AddEdge("F", "G", 5)
+	graph.AddEdge("G", "H", 10)
+	graph.AddEdge("H", "I", 10)
+	graph.AddEdge("I", "J", 5)
+	graph.AddEdge("G", "J", 20)
+	return graph
+}
+
+func TestGraph_ShortestPath_SourceNotExist(t *testing.T) {
+	graph := newTestGraph()
+	hop, dist := graph.ShortestPath("W", "A")
+	assert.Equal(t, -1, hop)
+	assert.Equal(t, -1, dist)
+}
+
+func TestGraph_ShortestPath_DestNotExist(t *testing.T) {
+	graph := newTestGraph()
+	hop, dist := graph.ShortestPath("A", "W")
+	assert.Equal(t, -1, hop)
+	assert.Equal(t, -1, dist)
+}
+
+func TestGraph_ShortestPath(t *testing.T) {
+	testcases := []struct {
+		src  string
+		dest string
+
+		hop  int
+		dist int
+	}{
+		{"A", "B", 1, 5},
+		{"A", "C", 2, 10},
+		{"E", "J", 3, 30},
+		{"A", "D", 1, 15},
+		{"A", "J", -1, -1},
+		{"A", "A", 0, 0},
+		{"E", "I", 4, 30},
+		{"B", "D", 2, 12},
+	}
+
+	for _, v := range testcases {
+		t.Run("shortest path", func(t *testing.T) {
+			graph := newTestGraph()
+			hop, dist := graph.ShortestPath(v.src, v.dest)
+
+			assert.Equal(t, v.hop, hop)
+			assert.Equal(t, v.dist, dist)
+		})
+	}
+}

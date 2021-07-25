@@ -1,5 +1,9 @@
 package main
 
+import (
+	"math"
+)
+
 func createGraphFromFile(filepath string) (*Graph, error) {
 	return nil, nil
 }
@@ -55,10 +59,81 @@ func (g *Graph) AddEdge(src, dest string, dist int) {
 }
 
 // Calculate shortest distance with number of hop between 2 vertex
-func (g *Graph) ShortestPath(src, dest string) (hop, dist int) {
-	return 0, 0
+func (g *Graph) ShortestPath(src, dest string) (hop, distance int) {
+	srcMapping, ok := g.Mapping[src]
+	if !ok {
+		return -1, -1
+	}
+	destMapping, ok := g.Mapping[dest]
+	if !ok {
+		return -1, -1
+	}
+
+	var (
+		srcIndex  = srcMapping - 1
+		destIndex = destMapping - 1
+
+		dist = make([]int, g.Size)
+		seen = make([]bool, g.Size)
+		prev = make([]int, g.Size)
+	)
+	for i := 0; i < g.Size; i++ {
+		dist[i] = math.MaxInt32
+		prev[i] = -1
+	}
+	dist[srcIndex] = 0
+
+	for {
+		u := findMin(dist, seen)
+		if u == -1 || u == destIndex {
+			break
+		}
+		seen[u] = true
+
+		for i, v := range g.Nodes[u] {
+			if v == 0 {
+				continue
+			}
+
+			alt := dist[u] + v
+			if alt < dist[i] {
+				dist[i] = alt
+				prev[i] = u
+			}
+		}
+	}
+
+	if dist[destIndex] == math.MaxInt32 {
+		return -1, -1
+	}
+
+	return calculateHop(destIndex, prev), dist[destIndex]
 }
 
-// Represent single vertex
-type Vertex struct {
+func calculateHop(start int, prev []int) int {
+	var hop int
+	index := start
+	for {
+		i := prev[index]
+		if i == -1 {
+			break
+		}
+
+		hop++
+		index = i
+	}
+	return hop
+}
+
+func findMin(nodes []int, seen []bool) int {
+	index := -1
+	current := math.MaxInt32
+
+	for i, v := range nodes {
+		if v < current && !seen[i] {
+			current = v
+			index = i
+		}
+	}
+	return index
 }
