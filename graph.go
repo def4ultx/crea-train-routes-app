@@ -84,7 +84,7 @@ func (g *Graph) ShortestPath(src, dest string) (hop, distance int) {
 	dist[srcIndex] = 0
 
 	for {
-		u := findMin(dist, seen)
+		u := findMinIndex(dist, seen)
 		if u == -1 || u == destIndex {
 			break
 		}
@@ -125,7 +125,7 @@ func calculateHop(start int, prev []int) int {
 	return hop
 }
 
-func findMin(nodes []int, seen []bool) int {
+func findMinIndex(nodes []int, seen []bool) int {
 	index := -1
 	current := math.MaxInt32
 
