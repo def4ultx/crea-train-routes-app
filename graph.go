@@ -21,7 +21,13 @@ func NewGraph() *Graph {
 
 // Add vertex to current graph
 func (g *Graph) AddVertex(name string) {
+	_, ok := g.Mapping[name]
+	if ok {
+		return
+	}
 
+	g.Size++
+	g.Mapping[name] = g.Size
 }
 
 // Add edge to current graph
