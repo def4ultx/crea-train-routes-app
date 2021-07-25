@@ -69,7 +69,7 @@ func TestGraph_AddVertexToExistingGraph(t *testing.T) {
 		},
 		Nodes: [][]int{
 			{0, 1, 2},
-			{0, 0, 2},
+			{1, 0, 2},
 			{2, 2, 0},
 		},
 	}
@@ -77,9 +77,96 @@ func TestGraph_AddVertexToExistingGraph(t *testing.T) {
 	graph.AddVertex("D")
 	expected := [][]int{
 		{0, 1, 2, 0},
-		{0, 0, 2, 0},
+		{1, 0, 2, 0},
 		{2, 2, 0, 0},
 		{0, 0, 0, 0},
+	}
+	assert.Equal(t, expected, graph.Nodes)
+}
+
+func TestGraph_AddEdge_ExistingVertex(t *testing.T) {
+	graph := &Graph{
+		Size: 3,
+		Mapping: map[string]int{
+			"A": 1,
+			"B": 2,
+			"C": 3,
+		},
+		Nodes: [][]int{
+			{0, 0, 0},
+			{0, 0, 0},
+			{0, 0, 0},
+		},
+	}
+	graph.AddEdge("A", "B", 1)
+	graph.AddEdge("A", "C", 2)
+
+	expected := [][]int{
+		{0, 1, 2},
+		{1, 0, 0},
+		{2, 0, 0},
+	}
+	assert.Equal(t, expected, graph.Nodes)
+}
+
+func TestGraph_AddEdge_1_ExistVertex(t *testing.T) {
+	graph := &Graph{
+		Size: 3,
+		Mapping: map[string]int{
+			"A": 1,
+			"B": 2,
+			"C": 3,
+		},
+		Nodes: [][]int{
+			{0, 1, 2},
+			{1, 0, 0},
+			{2, 0, 0},
+		},
+	}
+
+	graph.AddEdge("C", "D", 5)
+	expected := [][]int{
+		{0, 1, 2, 0},
+		{1, 0, 0, 0},
+		{2, 0, 0, 5},
+		{0, 0, 5, 0},
+	}
+	assert.Equal(t, expected, graph.Nodes)
+}
+
+func TestGraph_AddEdge_NewVertex(t *testing.T) {
+	graph := &Graph{
+		Size: 3,
+		Mapping: map[string]int{
+			"A": 1,
+			"B": 2,
+			"C": 3,
+		},
+		Nodes: [][]int{
+			{0, 1, 2},
+			{1, 0, 0},
+			{2, 0, 0},
+		},
+	}
+
+	graph.AddEdge("D", "E", 5)
+	expected := [][]int{
+		{0, 1, 2, 0, 0},
+		{1, 0, 0, 0, 0},
+		{2, 0, 0, 0, 0},
+		{0, 0, 0, 0, 5},
+		{0, 0, 0, 5, 0},
+	}
+	assert.Equal(t, expected, graph.Nodes)
+}
+
+func TestGraph_AddEdge_NewGraph(t *testing.T) {
+	graph := NewGraph()
+	graph.AddEdge("A", "B", 1)
+
+	expected := [][]int{
+		{0, 1},
+		{1, 0},
 	}
 	assert.Equal(t, expected, graph.Nodes)
 }

@@ -38,7 +38,20 @@ func (g *Graph) AddVertex(name string) {
 
 // Add edge to current graph
 func (g *Graph) AddEdge(src, dest string, dist int) {
+	srcIndex, ok := g.Mapping[src]
+	if !ok {
+		g.AddVertex(src)
+		srcIndex = g.Mapping[src]
+	}
 
+	destIndex, ok := g.Mapping[dest]
+	if !ok {
+		g.AddVertex(dest)
+		destIndex = g.Mapping[dest]
+	}
+
+	g.Nodes[srcIndex-1][destIndex-1] = dist
+	g.Nodes[destIndex-1][srcIndex-1] = dist
 }
 
 // Calculate shortest distance with number of hop between 2 vertex
