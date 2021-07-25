@@ -23,11 +23,19 @@ func TestGraph_AddVertex_AddNewVertex(t *testing.T) {
 	graph.AddVertex("C")
 	graph.AddVertex("D")
 
-	assert.Equal(t, graph.Size, 4)
-	assert.Equal(t, graph.Mapping["A"], 1)
-	assert.Equal(t, graph.Mapping["B"], 2)
-	assert.Equal(t, graph.Mapping["C"], 3)
-	assert.Equal(t, graph.Mapping["D"], 4)
+	assert.Equal(t, 4, graph.Size)
+	assert.Equal(t, 1, graph.Mapping["A"])
+	assert.Equal(t, 2, graph.Mapping["B"])
+	assert.Equal(t, 3, graph.Mapping["C"])
+	assert.Equal(t, 4, graph.Mapping["D"])
+
+	expected := [][]int{
+		{0, 0, 0, 0},
+		{0, 0, 0, 0},
+		{0, 0, 0, 0},
+		{0, 0, 0, 0},
+	}
+	assert.Equal(t, expected, graph.Nodes)
 }
 
 func TestGraph_AddVertex_HaveDuplicateVertex(t *testing.T) {
@@ -38,8 +46,40 @@ func TestGraph_AddVertex_HaveDuplicateVertex(t *testing.T) {
 	graph.AddVertex("B")
 	graph.AddVertex("C")
 
-	assert.Equal(t, graph.Size, 3)
-	assert.Equal(t, graph.Mapping["A"], 1)
-	assert.Equal(t, graph.Mapping["B"], 2)
-	assert.Equal(t, graph.Mapping["C"], 3)
+	assert.Equal(t, 3, graph.Size)
+	assert.Equal(t, 1, graph.Mapping["A"])
+	assert.Equal(t, 2, graph.Mapping["B"])
+	assert.Equal(t, 3, graph.Mapping["C"])
+
+	expected := [][]int{
+		{0, 0, 0},
+		{0, 0, 0},
+		{0, 0, 0},
+	}
+	assert.Equal(t, expected, graph.Nodes)
+}
+
+func TestGraph_AddVertexToExistingGraph(t *testing.T) {
+	graph := &Graph{
+		Size: 3,
+		Mapping: map[string]int{
+			"A": 1,
+			"B": 2,
+			"C": 3,
+		},
+		Nodes: [][]int{
+			{0, 1, 2},
+			{0, 0, 2},
+			{2, 2, 0},
+		},
+	}
+
+	graph.AddVertex("D")
+	expected := [][]int{
+		{0, 1, 2, 0},
+		{0, 0, 2, 0},
+		{2, 2, 0, 0},
+		{0, 0, 0, 0},
+	}
+	assert.Equal(t, expected, graph.Nodes)
 }

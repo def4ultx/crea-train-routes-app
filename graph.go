@@ -28,6 +28,12 @@ func (g *Graph) AddVertex(name string) {
 
 	g.Size++
 	g.Mapping[name] = g.Size
+
+	nodes := make([]int, g.Size-1)
+	g.Nodes = append(g.Nodes, nodes)
+	for i := range g.Nodes {
+		g.Nodes[i] = append(g.Nodes[i], 0)
+	}
 }
 
 // Add edge to current graph
