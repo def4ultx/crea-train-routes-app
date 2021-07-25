@@ -1,11 +1,29 @@
 package main
 
 import (
+	"encoding/csv"
+	"io"
 	"math"
+	"strconv"
 )
 
-func createGraphFromFile(filepath string) (*Graph, error) {
-	return nil, nil
+func createGraphFromReader(reader io.Reader) (*Graph, error) {
+	lines, err := csv.NewReader(reader).ReadAll()
+	if err != nil {
+		return nil, err
+	}
+
+	graph := NewGraph()
+	for _, line := range lines {
+		src, dest := line[0], line[1]
+		distance, err := strconv.Atoi(line[2])
+		if err != nil {
+			return nil, err
+		}
+
+		graph.AddEdge(src, dest, distance)
+	}
+	return graph, nil
 }
 
 // Hold all nodes, using adjacency metric representation

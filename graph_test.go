@@ -1,7 +1,10 @@
 package main
 
 import (
+	"errors"
+	"strings"
 	"testing"
+	"testing/iotest"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -227,4 +230,31 @@ func TestGraph_ShortestPath(t *testing.T) {
 			assert.Equal(t, v.dist, dist)
 		})
 	}
+}
+
+func TestCreateGraphFromReader(t *testing.T) {
+	csv := "A,B,5\nB,C,5\nC,D,7\nA,D,15\nE,F,5\nF,G,5\nG,H,10\nH,I,10\nI,J,5\nG,J,20\n"
+	data := strings.NewReader(csv)
+
+	actual, err := createGraphFromReader(data)
+	graph := newTestGraph()
+
+	assert.NoError(t, err)
+	assert.Equal(t, graph, actual)
+}
+
+func TestCreateGraphFromReader_InvalidFormat(t *testing.T) {
+	csv := "A,B,C"
+	data := strings.NewReader(csv)
+
+	actual, err := createGraphFromReader(data)
+	assert.Error(t, err)
+	assert.Empty(t, actual)
+}
+
+func TestCreateGraphFromReader_ReaderError(t *testing.T) {
+	r := iotest.ErrReader(errors.New("custom error"))
+	actual, err := createGraphFromReader(r)
+	assert.Error(t, err)
+	assert.Empty(t, actual)
 }

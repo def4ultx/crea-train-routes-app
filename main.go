@@ -14,9 +14,16 @@ func main() {
 	filepath := flag.String("file", "routes.csv", "a string")
 	flag.Parse()
 
-	graph, err := createGraphFromFile(*filepath)
+	file, err := os.Open(*filepath)
 	if err != nil {
-		fmt.Printf("cannot load %v, got err %v", filepath, err)
+		fmt.Printf("cannot open file %v, got err %v", filepath, err)
+		os.Exit(1)
+	}
+	defer file.Close()
+
+	graph, err := createGraphFromReader(file)
+	if err != nil {
+		fmt.Printf("cannot parse %v, got err %v", filepath, err)
 		os.Exit(1)
 	}
 
