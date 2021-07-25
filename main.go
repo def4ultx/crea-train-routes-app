@@ -29,7 +29,7 @@ func main() {
 
 		hop, distance := graph.ShortestPath(src, dest)
 		if distance >= 0 {
-			fmt.Printf("Your trip from %s to %s includes %d stops and will take %d minutes", src, dest, hop, distance)
+			fmt.Printf("Your trip from %s to %s includes %d stops and will take %d minutes", src, dest, hop-1, distance)
 			fmt.Println()
 		} else {
 			fmt.Printf("No routes from %s to %s", src, dest)
